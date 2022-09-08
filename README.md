@@ -44,6 +44,21 @@ cat ${working_dir}/mm-migration-offset.jsons | kafka-console-producer.sh --boots
 
 ## How to verify 
 
+Shorter/scripted way
+
+1. docker-compose up
+2. ./create-topics.sh
+3. ./mirror-maker-1.sh
+4. ./start-prod-1.sh
+5. ./start-prod-2.sh
+6. after a while stop mirror maker (3) 
+7. ./migrate.sh
+8. ./mirror-maker-2.sh
+9. ./verify.sh
+
+
+Long version
+
 1. Start two kafka clusters
 
 ```
@@ -89,7 +104,9 @@ kafka-verifiable-producer.sh --bootstrap-server localhost:9094 --value-prefix 3 
 
 8. Execute the migration procedure
 
-see below
+```
+./migrate.sh
+```
 
 9. Start Mirror Maker 2
 
