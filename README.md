@@ -22,11 +22,19 @@ kafka-consumer-groups.sh --bootstrap-server ${source_bootstrap} --describe --gro
 
 2. Convert 
 
+for zsh only:
 ```
 for topic partition offset in $(cat ${working_dir}/mm-migration-offset.csv); do
   printf '["MirrorSourceConnector",{"cluster":"%s","partition":%s,"topic":"%s"}]|{"offset":%s}\n' $source_alias $partition $topic $offset 
 done | tee ${working_dir}/mm-migration-offset.jsons
 ```
+
+alternatively:
+
+```
+awk '{ print "[\"MirrorSourceConnector\",{\"cluster\":\"cluster\",\"partition\":"$2",\"topic\":\""$1"\"}]|{\"offset\":"$3"}" }' ${working_dir}/mm-migration-offset.csv
+```
+
 
 3. Create internal topic
 
