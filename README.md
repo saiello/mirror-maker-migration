@@ -14,13 +14,18 @@ export target_bootstrap=localhost:9095
 export working_dir=/tmp
 ```
 
-1. Extract Offsets
+1. Stop MirrorMaker 1
+
+Before any activity stop mirror-maker instance
+
+
+2. Extract Offsets
 
 ```
 kafka-consumer-groups.sh --bootstrap-server ${source_bootstrap} --describe --group ${mm_cg_name} | awk -v group=$mm_cg_name '$1 == group { print $2,$3,$4-1 }' | tee ${working_dir}/mm-migration-offset.csv
 ```
 
-2. Convert 
+3. Convert 
 
 for zsh only:
 ```
@@ -36,18 +41,21 @@ awk '{ print "[\"MirrorSourceConnector\",{\"cluster\":\"cluster\",\"partition\":
 ```
 
 
-3. Create internal topic
+4. Create internal topic
 
 ```
 kafka-topics.sh --bootstrap-server ${target_bootstrap} --create --topic mm2-offsets.$source_alias.internal --partitions 25 --config cleanup.policy=compact
 ```
 
-4. Produce offsets
+5. Produce offsets
 
 ```
 cat ${working_dir}/mm-migration-offset.jsons | kafka-console-producer.sh --bootstrap-server ${target_bootstrap} --topic mm2-offsets.$source_alias.internal --property key.separator=\| --property parse.key=true
 ```
 
+6. Start MirrorMaker2 instance
+
+Start mirror-maker-2 consuming from the offsets where mirror-maker-1 ends to.
 
 
 ## How to verify 
