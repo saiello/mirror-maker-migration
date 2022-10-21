@@ -37,7 +37,7 @@ done | tee ${working_dir}/mm-migration-offset.jsons
 alternatively:
 
 ```
-awk '{ print "[\"MirrorSourceConnector\",{\"cluster\":\"cluster\",\"partition\":"$2",\"topic\":\""$1"\"}]|{\"offset\":"$3"}" }' ${working_dir}/mm-migration-offset.csv
+awk -v cluster=$source_alias '{ print "[\"MirrorSourceConnector\",{\"cluster\":\""cluster"\",\"partition\":"$2",\"topic\":\""$1"\"}]|{\"offset\":"$3"}" }' ${working_dir}/mm-migration-offset.csv | tee ${working_dir}/mm-migration-offset.jsons
 ```
 
 
